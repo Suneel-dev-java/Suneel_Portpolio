@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Suneel | Full-Stack Developer</title>
+    <meta
+      name="description"
+      content="Clean, full‑screen portfolio with left sidebar, hero/about, split content, projects, and contact."
+    />
+    <style>
+      :root {
+        --bg: #0b0f14; /* page background */
+        --panel: #0f1620; /* cards & sidebar */
+        --muted: #8692a6; /* secondary text */
+        --text: #e6edf3; /* primary text */
+        --brand: #6ea8fe; /* accent */
+        --brand-2: #7ee787; /* accent 2 */
+        --radius: 18px;
+        --shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+        --sidebar-w: 320px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+          Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        color: var(--text);
+
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+          /* dark overlay */
+            url("https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3")
+            no-repeat center center fixed;
+        background-size: cover;
+
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* 🌍 Globe overlay */
+      body::before {
+        content: "";
+        position: fixed;
+        bottom: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 900px;
+        height: 900px;
+        opacity: 0.6;
+        z-index: -2;
+        pointer-events: none;
+      }
+
+      /* ✨ Stars layer */
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 200%;
+        height: 200%;
+        background-repeat: repeat;
+        background-size: 1000px 1000px;
+        z-index: -3;
+        animation: moveStars 120s linear infinite;
+        background-image: radial-gradient(
+            2px 2px at 20px 30px,
+            #fff,
+            transparent
+          ),
+          radial-gradient(1px 1px at 100px 150px, #fff, transparent),
+          radial-gradient(2px 2px at 200px 250px, #fff, transparent),
+          radial-gradient(1px 1px at 300px 350px, #fff, transparent),
+          radial-gradient(2px 2px at 400px 450px, #fff, transparent),
+          radial-gradient(1px 1px at 500px 550px, #fff, transparent),
+          radial-gradient(2px 2px at 600px 150px, #fff, transparent),
+          radial-gradient(1px 1px at 700px 750px, #fff, transparent);
+      }
+
+      @keyframes moveStars {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(-1000px);
+        }
+      }
+
+      /* Layout */
+      .app {
+        display: flex;
+        min-height: 100vh;
+      }
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: var(--sidebar-w);
+        background: transparent; /* darker overlay */
+        backdrop-filter: blur(10px); /* frosted glass */
+        -webkit-backdrop-filter: blur(10px);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: #0b1220;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        display: grid;
+        place-items: center;
+      }
+      .avatar svg {
+        width: 70%;
+        height: 70%;
+      }
+      .name {
+        font-weight: 700;
+        font-size: 1.15rem;
+      }
+      .role {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      nav {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      nav a {
+        text-decoration: none;
+        color: var(--text);
+        padding: 8px 10px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        background: transparent;
+        border: 1px solid transparent;
+        font-size: 0.95rem;
+      }
+      nav a:hover,
+      nav a:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .contact-mini {
+        margin-top: auto;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 14px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .contact-mini a {
+        color: var(--brand);
+        text-decoration: none;
+      }
+
+      .main {
+        margin-left: var(--sidebar-w);
+        width: calc(100% - var(--sidebar-w));
+      }
+
+      /* Sections */
+      section {
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 5vw; /* tighter than 64px */
+        position: relative;
+      }
+      .container {
+        width: min(1100px, 100%);
+      }
+
+      /* HERO / ABOUT */
+      .hero {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 24px; /* reduced gap */
+      }
+      .kicker {
+        color: var(--brand-2);
+        background: transparent;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+      }
+      h1,
+      h2 {
+        margin: 0.4rem 0 0.6rem; /* tighter heading spacing */
+      }
+      .lead {
+        color: #c9d4e3;
+        font-size: clamp(1rem, 0.9vw + 0.8rem, 1.2rem);
+        line-height: 1.5;
+      }
+      .hero-card {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: var(--radius);
+        padding: 18px; /* reduced */
+        box-shadow: var(--shadow);
+      }
+      .hero-actions {
+        margin-top: 14px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+      }
+      .btn.primary {
+        background: linear-gradient(90deg, var(--brand), #a58bfe);
+        border-color: transparent;
+        color: #0a0f16;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      /* SPLIT CONTENT */
+      .split {
+        display: flex;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px; /* reduced */
+        align-items: center;
+      }
+      .split .pane {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: var(--radius);
+        padding: 18px; /* reduced */
+        box-shadow: var(--shadow);
+      }
+      .code-illus pre {
+        margin: 0;
+        width: 88%;
+        padding: 14px;
+        border-radius: 10px;
+        background: #0b1220;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: #cdd9e5;
+      }
+
+    
+
+      /* PROJECTS */
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px; /* tighter */
+      }
+      .project {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .project:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+      }
+      .project .thumb {
+        height: 150px;
+        background: linear-gradient(
+          135deg,
+          rgba(110, 168, 254, 0.25),
+          rgba(126, 231, 135, 0.18)
+        );
+      }
+      .project .body {
+        padding: 12px; /* reduced */
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .project h3 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+      .tags {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .tag {
+        font-size: 0.7rem;
+        padding: 5px 7px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #c6d0e0;
+      }
+      .project .actions {
+        margin-top: auto;
+        padding: 12px;
+        display: flex;
+        gap: 8px;
+      }
+      
+
+      /* CONTACT */
+      .contact-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        align-items: stretch;
+      }
+      form {
+        background: var(--panel);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 10px;
+      }
+      label {
+        font-size: 0.85rem;
+        color: #c9d4e3;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: #0a111b;
+        color: var(--text);
+      }
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      /* Responsive */
+      @media (max-width: 1100px) {
+        .hero,
+        .split {
+          grid-template-columns: 1fr;
+        }
+        .projects-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .contact-wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 860px) {
+        :root {
+          --sidebar-w: 100%;
+        }
+        .sidebar {
+          position: sticky;
+          width: 100%;
+          height: auto;
+          bottom: auto;
+          border-right: none;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .main {
+          margin-left: 0;
+          width: 100%;
+        }
+        nav {
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <!-- LEFT SIDE: Header image (avatar), name, and hyperlinks -->
+      <aside class="sidebar">
+        <div class="brand">
+  <div class="avatar" aria-hidden="true">
+    <img src="assets/avatar.jfif"  style="width: 100%; height: 100%; border-radius: 50%;" />
+  </div>
+          <div>
+            <div class="name">Suneel</div>
+            <div class="role">Full‑Stack Developer</div>
+          </div>
+        </div>
+        <nav aria-label="Primary">
+          <a href="#about">About</a>
+          <a href="#split">Highlights</a>
+          <a href="#projects">Projects</a>
+          <a href="#contact">Contact</a>
+        </nav>
+        <div class="contact-mini">
+          <div style="font-weight: 700; margin-bottom: 4px">Get in touch</div>
+          <div class="muted">Available for freelance & full‑time roles.</div>
+          <a href="mailto:you@example.com">suneel4tech@gmail.com</a>
+          <a href="tel:+91-90000-00000">+91 9121404462</a>
+        </div>
+      </aside>
+
+      <!-- RIGHT: Full‑screen sections -->
+      <main class="main">
+        <!-- 1) Leftside header describes About; this first section is the hero/about -->
+        <section id="about" aria-labelledby="about-title">
+          <div class="container hero">
+            <div>
+              <div class="kicker">Hello! 👋</div>
+              <h2 id="about-title">
+                I’m Suneel, a Full-stack Developer with 4+ years of
+                experience in designing and building scalable applications.
+              </h2>
+              <p class="lead">
+                Passionate about backend development and system design Strong in
+                Java, Spring Boot, Microservices, Reactive Programming Hands-on
+                experience with AWS, Apache Kafka, SQL/PLSQL Focused on
+                high-performance systems & problem solving
+              </p>
+              <div class="hero-actions">
+                <a class="btn primary" href="#projects">View Projects</a>
+                <a class="btn primary" href="#contact">Contact Me</a>
+                <a
+                  class="btn primary"
+                  href="https://github.com/"
+                  target="_blank"
+                  rel="noreferrer"
+                  >GitHub</a
+                >
+              </div>
+            </div>
+            <div class="hero-card">
+              <h3 style="margin-top: 0">Quick facts</h3>
+              <ul
+                style="margin: 8px 0 0 18px; line-height: 1.8; color: #c9d4e3"
+              >
+                <li>4+ years building scalable full-stack applications</li>
+                <li>Java,Spring Boot,Microservices,AWS,python,JavaScript/TypeScript, React</li>
+                <li>Deployed on AWS (S3, EC2, RDS), GCP & Azure</li>
+                <li>Open source contributor & mentor</li>
+                <li>Secure APIs by default: OWASP, auth, secrets</li>
+                <li>State management & design systems expertise</li>
+                <li>Performance optimization & developer experience</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2) Some content beside a coding image (split layout) -->
+        <section id="split" aria-labelledby="split-title">
+          <div class="container split">
+            <div class="pane">
+              <div class="kicker">What I do</div>
+              <h2 id="split-title" style="margin: 0.4rem 0 1rem">
+                <p>
+                  I design and build scalable, high-performance applications from backend
+        systems to frontend experiences. My focus is on creating reliable,
+        secure, and maintainable software that solves real business problems.
+
+                </p>
+              </h2>
+              <p style="color: #c9d4e3; line-height: 1.75">
+                I turn ideas into scalable, maintainable software. From design
+                tokens and component libraries to resilient APIs and database
+                schemas. I love refactoring gnarly code, improving developer
+                experience, and squeezing out milliseconds.
+              </p>
+              <ul
+                style="margin: 12px 0 0 18px; line-height: 1.9; color: #c9d4e3"
+              >
+                <li>Full-stack engineering with <strong>Java (Spring Boot),AWS,Kafka,Quarkus,Python,Reactive-Programming,SpringWeb-Flux</strong> and <strong>React</strong></li>
+                <li>Cloud deployment on <strong>AWS (S3, EC2, RDS, Lambda)</strong>, plus exposure to GCP & Azure</li>
+                <li>Designing secure <strong>REST APIs</strong> with authentication, authorization & OWASP practices</li>
+                <li>Database design & optimization using <strong>MySQL, PostgreSQL, MongoDB</strong></li>
+                <li>CI/CD pipelines with <strong>Jenkins, GitHub Actions, Docker & Kubernetes</strong></li>
+                <li>System performance monitoring & observability with <strong>Prometheus, Grafana, ELK</strong></li>
+                <li>Accessible & semantic UIs with <strong>React component libraries</strong> and state-management patterns</li>
+                <li>Open-source contributor & mentor, improving developer experience & scalable architecture</li>
+              </ul>
+            </div>
+        </section>
+
+        <!-- 3) Projects, full‑screen feel with grid; scroll for more if many -->
+        <section id="projects" aria-labelledby="projects-title">
+          <div class="container">
+            <div class="kicker">Selected Work</div>
+            <h2 id="projects-title" style="margin: 0.4rem 0 1rem">Projects</h2>
+            <div class="projects-grid">
+              <article class="project" aria-labelledby="p1-title">
+                <div class="thumb">
+                  <img src="assets/rent_smart.png" style="max-width: 120%; width: 100%; height: auto; max-height: 100%; border-radius: 0px; box-shadow: 0 2px 12px rgba(0,0,0,0.12);" />
+                </div>
+                <div class="body">
+                  <h3 id="p1-title">Rent Smart</h3>
+                  <p class="muted">
+                    Rent Smart is a rental agreement automation platform that streamlines the
+                    entire leasing workflow. It allows landlords and tenants to generate
+                    legally compliant agreements, digitally sign them, and securely store
+                    documents in the cloud.  
+                    The system is built with <b>java,Spring Boot,Microservices</b> for backend services and
+                    integrates <b>AWS S3</b> for scalable, encrypted document storage.
+                  </p>
+                  <div class="tags">
+                    <span class="tag">Java</span>
+                    <span class="tag">AWS S3</span>
+                    <span class="tag">Springboot</span>
+                    <span class="tag">Microservices</span>
+                    <span class="tag">kafka</span>
+                    <span class="tag">Aurora PostgreSQL</span>
+                  </div>
+                </div>
+              </article>
+
+              <article class="project" aria-labelledby="p2-title">
+                <div class="thumb">
+                    <img src="assets/rakuten_trade.png" style="max-width: 120%; width: 100%; height: auto; max-height: 100%; border-radius: 0px; box-shadow: 0 2px 12px rgba(0,0,0,0.12);" />
+                </div>
+                <div class="body">
+                  <h3 id="p2-title">Rakuten Trade Singapore (RTSG)</h3>
+                  <p class="muted">
+                                Rakuten Trade Singapore is a comprehensive <b>trading platform</b> designed to
+                deliver a seamless and efficient trading experience. It enables users to handle
+                <b>customer onboarding, real-time market data, order management, product catalog,
+                corporate actions, trade settlements, rewards programs,</b>and <b>notifications</b>.
+                The system is built with <b>Java 8, Reactive Java, Spring Boot, and Microservices</b>,
+                leveraging <b>Aurora PostgreSQL</b> for data management and <b>AWS Services</b> for
+                scalability and reliability.
+                  </p>
+                  <div class="tags">
+                    <span class="tag">Java 8</span>
+                    <span class="tag">Reactive Java</span>
+                    <span class="tag">Spring Boot</span>
+                    <span class="tag">Microservices</span>
+                    <span class="tag">Aurora PostgreSQL</span>
+                    <span class="tag">Kafka</span>
+                    <span class="tag">AWS</span>
+                  </div>
+                </div>
+              </article>
+
+              <article class="project" aria-labelledby="p3-title">
+                <div class="thumb">
+                    <img src="assets/data_fuze.jfif" style="max-width: 120%; width: 100%; height: auto; max-height: 100%; border-radius: 0px; box-shadow: 0 2px 12px rgba(0,0,0,0.12);" />
+                </div>
+                <div class="body">
+                  <h3 id="p3-title">DataFuze-chatbot</h3>
+                <p class="muted">
+                    DataFuze is an intelligent data transformation and reconciliation platform that
+                    streamlines the conversion of complex financial messages across multiple formats.
+                    It automates <b>SWIFT MX to MT</b> translation, ensures accurate reconciliation,
+                    and accelerates integration between heterogeneous systems. The solution is
+                    developed with <b>Python FastAPI</b> and <b>Java Spring Boot</b> for backend
+                    services, while <b>React</b> delivers a dynamic and intuitive user interface.
+                    </p>
+                  <div class="tags">
+                    <span class="tag">Python</span>
+                    <span class="tag">FastAPI</span>
+                    <span class="tag">Java</span>
+                    <span class="tag">Spring Boot</span>
+                    <span class="tag">React</span>
+                    <span class="tag">PostgreSQL</span>
+                    <span class="tag">Open-Api</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4) Contact info full‑screen -->
+        <section id="contact" aria-labelledby="contact-title">
+          <div class="container" style="display: flex; gap: 24px; align-items: stretch;">
+            <div class="pane" style="flex:1;">
+              <div class="kicker">Contact</div>
+              <h2 id="contact-title" style="margin: 0.4rem 0 1rem">
+                Let’s build something
+              </h2>
+              <form
+                onsubmit="event.preventDefault(); alert('Thanks! I\'ll get back to you shortly.');"
+                style="display: flex; flex-direction: column; gap: 10px; background: transparent; border: none; box-shadow: none; padding: 0;"
+              >
+                <div>
+                  <label for="name">Name</label>
+                  <input
+                    id="name"
+                    name="name"
+                    placeholder="Your full name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label for="email">Email</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    required
+                  />
+                </div>
+                <div>
+                  <label for="msg">Message</label>
+                  <textarea
+                    id="msg"
+                    name="message"
+                    placeholder="Tell me about your project…"
+                    required
+                  ></textarea>
+                </div>
+                <button class="btn primary" type="submit">Send Message</button>
+              </form>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      // Optional: highlight active nav link as you scroll
+      const links = document.querySelectorAll("nav a");
+      const sections = [...document.querySelectorAll("main section")];
+      const spy = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              links.forEach((a) => a.classList.remove("active"));
+              const id = "#" + entry.target.id;
+              const current = document.querySelector(`nav a[href="${id}"]`);
+              current && current.classList.add("active");
+            }
+          });
+        },
+        { rootMargin: "-40% 0px -59% 0px", threshold: 0 }
+      );
+      sections.forEach((s) => spy.observe(s));
+
+      // Style for active link
+      const style = document.createElement("style");
+      style.textContent = `nav a.active{background:rgba(126,231,135,.15); border-color:rgba(126,231,135,.35)}`;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>
